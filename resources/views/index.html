@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developers</title>
+
+    <link rel="icon" type="image/png" href="http://localhost/developers/public/assets/img/api_dev.png"/>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+
+    <!-- MODAL -->
+    <style>
+
+        .modal
+        {
+            position: fixed;
+            background: rgba(0,0,0,0.3);
+            width: 100%;
+            height: 100%;
+            z-index: 11;
+            overflow:auto;
+            padding: 20px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.modal-show
+        {
+            display: flex;
+        }
+
+        .modal-box
+        {
+            border-radius: 3px;
+            height: 100%;
+        }
+
+        .modal-close
+        {
+            float: right;
+            padding: 10px 15px;
+            font-size: 1.3em;
+            cursor: pointer;
+            color: #999999;
+        }
+
+        .modal-show .modal-box
+        {
+            animation: modal-box .4s;
+        }
+
+        @keyframes modal-box
+        {
+            from
+            {
+                opacity: 0;
+                transform: translate3d(0, -60px, 0)
+            }
+            to
+            {
+                opacity: 1;
+                transform: translate3d(0, 0, 0)
+            }
+        }
+    </style>
+
+    <!-- FORM -->
+    <style>
+        .form-signin
+        {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+
+        .form-signin .checkbox
+        {
+            font-weight: 400;
+        }
+
+        .form-signin .form-control
+        {
+            position: relative;
+            box-sizing: border-box;
+            height: auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .form-signin .form-control:focus
+        {
+            z-index: 2;
+        }
+
+        .form-signin input[type="email"]
+        {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .form-signin input[type="password"]
+        {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        h1
+        {
+            color: #888888;
+        }
+
+        .login-lembre
+        {
+            color: #1591f7;
+            cursor: pointer;
+        }
+
+        .form-signin a
+        {
+            color: #888888;
+            text-decoration: none;
+        }
+
+        .form-signin img
+        {
+            width: 50px;
+        }
+    </style>
+
+    <!-- PAGINATION -->
+    <style>
+
+        .links
+        {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .links a
+        {
+            text-decoration: none;
+            padding: 5px 15px;
+            background-color: azure;
+            margin-right: 5px;
+            border-radius: 3px;
+            border: solid 1px #1591f7;
+        }
+
+        .links .active
+        {
+            color:coral;
+            font-weight: bold;
+            border: solid 1px coral;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="js-loading modal" style="z-index: 13; display: none;">
+
+        <div style="background: rgba(255,255,255,0.2); position: fixed; left: 50%; top: 50%; margin-left: -50px; margin-top: -50px; width: 100px; height: 100px; border-radius: 50%;">
+
+            <img src="http://localhost/developers/public/assets/img/loading.gif" style="width: 100px; height: 100px;">
+
+        </div>
+
+    </div>
+
+    <div class="modal">
+
+        <div class="container-fluid modal-box bg-light" style="overflow: auto;">
+            <div class="row">
+                <div class="container-fluid p-3">
+
+                    <div class="row">
+                        <div class="col-10 text-left mt-3" style="padding-top: 13px;">
+                            <span id="modal-title" style="color: #999; font-weight: bold;">
+                                <!-- {{-- ALIMENTADO VIA JAVASCRIPT --}} -->
+                            </span>
+                        </div>
+
+                        <div class="col-2 mt-3">
+                            <span id="modal-close" class="modal-close">
+                                <i class="fas fa-times"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div id="modal-content" class="mt-3">
+                        <form name="formCreate">
+
+                            <input type="hidden" name="acao" value="create">
+                            <input type="hidden" name="id">
+
+                            <div class="row">
+
+                                <div class="col-12 col-md-6 mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Nome</label>
+                                    <input type="text" name="nome" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                    <div id="errorNome" class="form-text" style="color: red; display: none;"></div>
+                                </div>
+                                <div class="col-12 col-md-6 mb-3">
+                                    <label for="exampleInputPassword1" class="form-label">Nascimento</label>
+                                    <input type="date" name="datanascimento" class="form-control" id="exampleInputPassword1">
+                                    <div id="errorDataNascimento" class="form-text" style="color: red; display: none;"></div>
+                                </div>
+
+                                <div class="col-12 col-md-4 mb-3">
+                                    <label for="exampleInputPassword1" class="form-label">Sexo</label>
+                                    <input type="text" name="sexo" class="form-control" id="exampleInputPassword1">
+                                    <div id="errorSexo" class="form-text" style="color: red; display: none;"></div>
+                                </div>
+                                <div class="col-12 col-md-4 mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Idade</label>
+                                    <input type="number" name="idade" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                    <div id="errorIdade" class="form-text" style="color: red; display: none;"></div>
+                                </div>
+                                <div class="col-12 col-md-4 mb-3">
+                                    <label for="exampleInputPassword1" class="form-label">Hobby</label>
+                                    <input type="text" name="hobby" class="form-control" id="exampleInputPassword1">
+                                    <div id="errorHobby" class="form-text" style="color: red; display: none;"></div>
+                                </div>
+
+                            </div>
+
+                            <button id="btnCreate" type="submit" class="btn btn-success">Salvar Alterações</button>
+
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="col-12 mt-5">
+            <img src="http://localhost/developers/public/assets/img/api_dev.png" width="80">
+            <span class="" style="font-size: 28px; color: #999;">Developers</span>
+        </div>
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mt-2">
+            <div class="container-fluid">
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                <div class="container-fluid">
+                    <div class="row">
+
+                        <div class="col-6">
+                            <button id="create" class="btn btn-success btn-large"><i class="fas fa-plus"></i> Desenvolvedor</button>
+                        </div>
+
+                        <div class="col-6">
+                            <form name="formPaginate" class="d-flex">
+                                <input class="form-control me-2" name="page" type="number" placeholder="Registros por página" aria-label="Search">
+                                <button class="btn btn-outline-success" type="submit">Gerar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+              </div>
+            </div>
+        </nav>
+
+        <table class="table table-hover mt-2" style="color: #888; font-family: 'Courier', Courier New, monospace;">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Sexo</th>
+                <th scope="col">Idade</th>
+                <th scope="col">Hobby</th>
+                <th scope="col">Nascimento</th>
+                <th scope="col">Editar</th>
+                <th scope="col">Excluir</th>
+              </tr>
+            </thead>
+
+            <tbody class="list">
+                <!-- PREENCHIDO VIA API -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container">
+        <div class="links">
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+</body>
+</html>
+
+<script>
+    $(function()
+    {
+        ajaxDefault('list', 'http://localhost/developers/public/api/developers', 'GET');
+
+        $('form[name=formPaginate]').submit(function(e)
+        {
+            e.preventDefault()
+
+            $('.list').html('');
+
+            let form = document.querySelector('form[name=formPaginate]');
+
+            let formData = new FormData(form);
+
+            globalLimit = +formData.get('page');
+
+            pages(1);
+        });
+
+        $('.links').on('click', '.pageLink', function()
+        {
+            let link = $(this);
+
+            pages(link.attr('value'));
+        });
+
+        $('#create').click(function()
+        {
+            $('#modal-title').html('Cadastrando Desenvolvedor');
+            $('.modal').addClass('modal-show');
+        });
+
+        $('.list').on('click', '.edit', function()
+        {
+            let edit = $(this);
+            let id = edit.attr('idDeveloper');
+
+            $('input[name="acao"]').val('edit');
+            $('input[name="id"]').val(id);
+
+            ajaxDefault('edit', 'http://localhost/developers/public/api/developers/' + id + '/edit', 'GET');
+
+            $('#modal-title').html('Editando: ' + edit.attr('value'));
+            $('.modal').addClass('modal-show');
+        });
+
+        $('.list').on('click', '.delete', function()
+        {
+            $('#btnCreate').removeClass('btn-success');
+            $('#btnCreate').addClass('btn-danger');
+            $('#btnCreate').text('Excluir Registro');
+
+            let del = $(this);
+            let id = del.attr('idDeveloper');
+
+            $('input[name="acao"]').val('delete');
+            $('input[name="id"]').val(id);
+
+            ajaxDefault('delete', 'http://localhost/developers/public/api/developers/' + id + '/delete', 'GET');
+
+            $('#modal-title').html('Excluindo: ' + del.attr('value'));
+            $('.modal').addClass('modal-show');
+        });
+
+        $('form[name=formCreate]').submit(function(e)
+        {
+            e.preventDefault()
+
+            $('.js-loading').fadeIn();
+
+            let form = document.querySelector('form[name=formCreate]');
+
+            let formData = new FormData(form);
+
+            let data =
+            {
+                'id' : formData.get('id'),
+                'nome': formData.get('nome'),
+                'datanascimento': formData.get('datanascimento'),
+                'sexo': formData.get('sexo'),
+                'idade': formData.get('idade'),
+                'hobby': formData.get('hobby')
+            }
+
+            if(formData.get('acao') == 'create')
+            {
+                ajaxDefault('create', 'http://localhost/developers/public/api/developers', 'POST', data);
+            }
+            else if(formData.get('acao') == 'edit')
+            {
+                ajaxDefault('create', 'http://localhost/developers/public/api/developers', 'PUT', data);
+            }
+            else if(formData.get('acao') == 'delete')
+            {
+                ajaxDefault('create', 'http://localhost/developers/public/api/developers', 'DELETE', data);
+            }
+        });
+
+        //MODAL-CLOSE
+        $('#modal-close').click(function()
+        {
+            document.location.reload(true);
+        });
+
+        function ajaxDefault(type, route, verbo, data = {})
+        {
+            $.ajax
+            ({
+                url: route,
+                data: data,
+                type: verbo,
+                dataType: 'json',
+                success: function(response)
+                {
+                    $('.js-loading').fadeOut();
+
+                    if(type == 'list')
+                    {
+                        $('.list').html('');
+
+                        globalPage = response;
+
+                        $.each(globalPage, function(key, value)
+                        {
+                            $('.list').append
+                            (
+                                '<tr>' +
+                                    '<td>' + value.id + '</td>' +
+                                    '<td>' + value.nome + '</td>' +
+                                    '<td>' + value.sexo + '</td>' +
+                                    '<td>' + value.idade + '</td>' +
+                                    '<td>' + value.hobby + '</td>' +
+                                    '<td>' + value.datanascimento + '</td>' +
+                                    '<td>' +
+                                        '<button class="edit btn btn-primary" idDeveloper="' + value.id + '" value="' + value.nome + '">' +
+                                            '<i class="far fa-edit"></i>' +
+                                        '</button>' +
+                                    '</td>' +
+                                    '<td>' +
+                                        '<button class="delete btn btn-danger" idDeveloper="' + value.id + '" value="' + value.nome + '">' +
+                                            '<i class="far fa-trash-alt"></i>' +
+                                        '</button>' +
+                                    '</td>' +
+                                '</tr>'
+                            );
+                        });
+                    }
+
+                    if(type == 'edit')
+                    {
+                        $('input[name="nome"]').val(response.nome);
+                        $('input[name="datanascimento"]').val(response.datanascimento);
+                        $('input[name="sexo"]').val(response.sexo);
+                        $('input[name="idade"]').val(response.idade);
+                        $('input[name="hobby"]').val(response.hobby);
+                    }
+
+                    if(type == 'delete')
+                    {
+                        $('input[name="nome"]').val(response.nome);
+                        $('input[name="datanascimento"]').val(response.datanascimento);
+                        $('input[name="sexo"]').val(response.sexo);
+                        $('input[name="idade"]').val(response.idade);
+                        $('input[name="hobby"]').val(response.hobby);
+                    }
+
+                    if(type == 'create')
+                    {
+                        document.location.reload(true);
+                    }
+                },
+                error(response)
+                {
+                    $('.js-loading').fadeOut();
+                    console.log(response);
+
+                    if(typeof response.responseJSON.nome != 'undefined')
+                    {
+                        $('#errorNome').text(response.responseJSON.nome).slideDown();
+                    }
+                    else
+                    {
+                        $('#errorNome').slideUp();
+                    }
+
+                    if(typeof response.responseJSON.datanascimento != 'undefined')
+                    {
+                        $('#errorDataNascimento').text(response.responseJSON.datanascimento).slideDown();
+                    }
+                    else
+                    {
+                        $('#errorDataNascimento').slideUp();
+                    }
+
+                    if(typeof response.responseJSON.sexo != 'undefined')
+                    {
+                        $('#errorSexo').text(response.responseJSON.sexo).slideDown();
+                    }
+                    else
+                    {
+                        $('#errorSexo').slideUp();
+                    }
+
+                    if(typeof response.responseJSON.idade != 'undefined')
+                    {
+                        $('#errorIdade').text(response.responseJSON.idade).slideDown();
+                    }
+                    else
+                    {
+                        $('#errorIdade').slideUp();
+                    }
+
+                    if(typeof response.responseJSON.hobby != 'undefined')
+                    {
+                        $('#errorHobby').text(response.responseJSON.hobby).slideDown();
+                    }
+                    else
+                    {
+                        $('#errorHobby').slideUp();
+                    }
+                }
+            });
+        }
+
+        // PAGINATION
+
+        function pages(pageQuery)
+        {
+            let page = parseInt(pageQuery) || 1;
+            let offset = (page - 1) * globalLimit;
+            let total = globalPage.length;
+            let items = globalPage.slice(offset, offset + globalLimit);
+            let pageResult = pagination(page, total, globalLimit);
+
+            let resgistersHtml = '';
+
+            for(let i = 0; i < items.length; i++)
+            {
+                let registers = items[i];
+
+                let html = '<tr>' +
+                                '<td>' + registers.id + '</td>' +
+                                '<td>' + registers.nome + '</td>' +
+                                '<td>' + registers.sexo + '</td>' +
+                                '<td>' + registers.idade + '</td>' +
+                                '<td>' + registers.hobby + '</td>' +
+                                '<td>' + registers.datanascimento + '</td>' +
+                                '<td>' +
+                                    '<button class="edit btn btn-primary" idDeveloper="' + registers.id + '" value="' + registers.nome + '">' +
+                                        '<i class="far fa-edit"></i>' +
+                                    '</button>' +
+                                '</td>' +
+                                '<td>' +
+                                    '<button class="delete btn btn-danger" idDeveloper="' + registers.id + '" value="' + registers.nome + '">' +
+                                        '<i class="far fa-trash-alt"></i>' +
+                                    '</button>' +
+                                '</td>' +
+                            '</tr>'
+
+                resgistersHtml += html;
+            }
+
+            $('.list').html(resgistersHtml);
+
+            let pageItems = '';
+            let active = '';
+
+            for(let i = 0; i < pageResult.pages; i++)
+            {
+                let pageActive = (i + 1);
+                active = (pageActive == pageQuery ? 'active' : '');
+                pageItems += '<a class="pageLink ' + active + '" href="javascript:void(0)" value="' + pageActive + '">' + pageActive + '</a>';
+            }
+
+            $('.links').html(pageItems);
+        }
+
+        function pagination(page, total, limit)
+        {
+            var pageSize = Math.ceil(total/limit);
+
+            var _pagination =
+            {
+                page: page,
+                total: total,
+                limit: limit,
+                pages: pageSize
+            };
+
+            if(page > 1)
+            {
+                var prev = page-1;
+                _pagination.previous = prev;
+            }
+
+            var remaining = total - (page * limit);
+
+            if(remaining > 0)
+            {
+                _pagination.next = page+1;
+            }
+
+            return _pagination;
+        }
+    });
+</script>
